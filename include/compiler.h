@@ -84,20 +84,20 @@
 #ifdef __mcoldfire__
 
 #define PUSH_SP(regs,size)						\
-	"lea	sp@(-" #size "),sp\n\t"					\
-	"movml	" regs ",sp@\n\t"
+	"lea	%%sp@(-" #size "),%%sp\n\t"					\
+	"movml	" regs ",%%sp@\n\t"
 
 #define POP_SP(regs,size)						\
-	"movml	sp@," regs "\n\t"					\
-	"lea	sp@(" #size "),sp\n\t"
+	"movml	%%sp@," regs "\n\t"					\
+	"lea	%%sp@(" #size "),%%sp\n\t"
 
 #else
 
 #define PUSH_SP(regs,size)						\
-	"movml	" regs ",sp@-\n\t"
+	"movml	" regs ",%%sp@-\n\t"
 
 #define POP_SP(regs,size)						\
-	"movml	sp@+," regs "\n\t"
+	"movml	%%sp@+," regs "\n\t"
 
 #endif
 
@@ -163,6 +163,19 @@
 #   define unix __unix__
 #  endif
 # endif
+#endif
+
+#ifndef __USER_LABEL_PREFIX__
+#  if defined(__ELF__)
+#    define __USER_LABEL_PREFIX__
+#  else
+#    define __USER_LABEL_PREFIX__ _
+#  endif
+#endif
+
+#ifndef __SYMBOL_PREFIX
+# define __SYMBOL_PREFIX __STRINGIFY(__USER_LABEL_PREFIX__)
+# define __ASM_SYMBOL_PREFIX __USER_LABEL_PREFIX__
 #endif
 
 #ifndef _LINKER_H

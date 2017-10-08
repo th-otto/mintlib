@@ -758,11 +758,13 @@ extern short  (**__funcs) (void);
 	/* Functions */
 
 #ifdef __mcoldfire__
-	// On ColdFire V4e, the standard Line A opcodes
-	// conflict with some valid MAC instructions.
-	// Fortunately, the following range is always invalid
-	// and triggers the standard Line A exception.
-	// The ColdFire OS will keep only the last 4 bits
+	/*
+	 * On ColdFire V4e, the standard Line A opcodes
+	 * conflict with some valid MAC instructions.
+	 * Fortunately, the following range is always invalid
+	 * and triggers the standard Line A exception.
+	 * The ColdFire OS will keep only the last 4 bits
+	 */
 	#define LINEA_OPCODE_BASE 0xa920
 #else
 	#define LINEA_OPCODE_BASE 0xa000
@@ -784,7 +786,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x0)						\
 	: "=g"(__xaline), "=g"(__xfonts), "=g"(__xfuncs)  /* outputs */	\
 	: 						  /* inputs  */	\
-	: __CLOBBER_RETURN("a0") __CLOBBER_RETURN("a1") __CLOBBER_RETURN("a2") "d0", "d1", "d2"       /* clobbered regs */	\
+	: __CLOBBER_RETURN("a0") __CLOBBER_RETURN("a1") __CLOBBER_RETURN("a2") "d0", "d1", "d2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 	__aline = __xaline;						\
@@ -799,7 +801,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x1)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -812,7 +814,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x2)						\
 	: "=g"(retvalue)				  /* outputs */	\
 	: 						  /* inputs  */	\
-	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 	(int)retvalue;							\
@@ -825,7 +827,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x3)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -837,7 +839,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x4)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -849,7 +851,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x5)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -861,7 +863,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x6)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -870,13 +872,13 @@ extern short  (**__funcs) (void);
 ({									\
 	__asm__ volatile						\
 	(								\
-		PUSH_SP("d2/a2/a6", 12)					\
- 		"movl	%0,a6\n\t"					\
+		PUSH_SP("%%d2/%%a2/%%a6", 12)					\
+ 		"movl	%0,%%a6\n\t"					\
 		ASM_LINEA(0x7) "\n\t"					\
-		POP_SP("d2/a2/a6", 12)					\
+		POP_SP("%%d2/%%a2/%%a6", 12)					\
 	: 						  /* outputs */	\
 	: "r"(P)					  /* inputs  */	\
-	: "d0", "d1", "a0", "a1"	  	/* clobbered regs */	\
+	: "d0", "d1", "a0", "a1", "cc"	  	/* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -888,7 +890,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x8)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -900,7 +902,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0x9)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -912,7 +914,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0xa)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -924,7 +926,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0xb)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -934,12 +936,12 @@ extern short  (**__funcs) (void);
 	__asm__ volatile						\
 	(								\
  		"movl	%0,a2\n\t"					\
-		"movl	a6,sp@-\n\t"					\
+		"movl	%%a6,%%sp@-\n\t"					\
 		ASM_LINEA(0xc) "\n\t"					\
-		"movl	sp@+,a6"					\
+		"movl	%%sp@+,%%a6"					\
 	: 						  /* outputs */	\
 	: "g"(P)					  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"	   /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"	   /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -953,12 +955,12 @@ extern short  (**__funcs) (void);
  		"movw	%1,d1\n\t"					\
  		"movl	%2,a0\n\t"					\
  		"movl	%3,a2\n\t"					\
-		"movl	a6,sp@-\n\t"					\
+		"movl	%%a6,%%sp@-\n\t"					\
 		ASM_LINEA(0xd) "\n\t"					\
-		"movl	sp@+,a6"					\
+		"movl	%%sp@+,%%a6"					\
 	: 						  /* outputs */	\
 	: "g"(x), "g"(y), "g"(sd), "g"(ss)		  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"	   /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"	   /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -970,7 +972,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0xe)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
@@ -982,7 +984,7 @@ extern short  (**__funcs) (void);
 		ASM_LINEA(0xf)						\
 	: 						  /* outputs */	\
 	: 						  /* inputs  */	\
-	: "d0", "d1", "d2", "a0", "a1", "a2"       /* clobbered regs */	\
+	: "d0", "d1", "d2", "a0", "a1", "a2", "cc"       /* clobbered regs */	\
 	  AND_MEMORY							\
 	);								\
 })
