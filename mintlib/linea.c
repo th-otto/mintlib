@@ -6,6 +6,43 @@
 #define __NO_INLINE__
 #include <mint/linea.h>
 
+#ifdef __GNUC__
+#ifdef __mcoldfire__
+
+#define PUSH_SP(regs,size)						\
+	"lea	%%sp@(-" #size "),%%sp\n\t"					\
+	"movml	" regs ",%%sp@\n\t"
+
+#define POP_SP(regs,size)						\
+	"movml	%%sp@," regs "\n\t"					\
+	"lea	%%sp@(" #size "),%%sp\n\t"
+
+#else
+
+#define PUSH_SP(regs,size)						\
+	"movml	" regs ",%%sp@-\n\t"
+
+#define POP_SP(regs,size)						\
+	"movml	%%sp@+," regs "\n\t"
+
+#endif
+#endif
+
+#ifdef __mcoldfire__
+	// On ColdFire V4e, the standard Line A opcodes
+	// conflict with some valid MAC instructions.
+	// Fortunately, the following range is always invalid
+	// and triggers the standard Line A exception.
+	// The ColdFire OS will keep only the last 4 bits
+	#define LINEA_OPCODE_BASE 0xa920
+#else
+	#define LINEA_OPCODE_BASE 0xa000
+#endif
+	#define ASM_LINEA3(opcode) ".word	" #opcode
+	#define ASM_LINEA2(opcode) ASM_LINEA3(opcode)
+	#define ASM_LINEA(n) ASM_LINEA2(LINEA_OPCODE_BASE+n)
+
+
 void linea0(void)
 {
         register __LINEA *__xaline __asm__ ("a0");
