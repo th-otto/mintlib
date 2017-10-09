@@ -206,7 +206,7 @@ void lineac(void *P)
 {
 	__asm__ volatile
 	(
- 		"movl	%0,a2\n\t"
+ 		"movl	%0,%%a2\n\t"
 		ASM_LINEA(0xc)
 	: 						  /* outputs */
 	: "r"(P)					  /* inputs  */
@@ -219,10 +219,10 @@ void linead(int x, int y,  SFORM * sd, void *ss)
 {
 	__asm__ volatile
 	(
- 		"movw	%0,d0\n\t"
- 		"movw	%1,d1\n\t"
- 		"movl	%2,a0\n\t"
- 		"movl	%3,a2\n\t"
+ 		"movw	%0,%%d0\n\t"
+ 		"movw	%1,%%d1\n\t"
+ 		"movl	%2,%%a0\n\t"
+ 		"movl	%3,%%a2\n\t"
 		ASM_LINEA(0xd)
 	: 						  /* outputs */
 	: "r"((short)x), "r"((short)y), "r"(sd), "r"(ss)  /* inputs  */
